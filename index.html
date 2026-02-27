@@ -314,7 +314,7 @@ function exportExcel() {
   });
 
   XLSX.utils.book_append_sheet(wb, ws, "Library Data");
-  XLSX.writeFile(wb, "KMCLU_Library_Report.xlsx", { cellStyles:true });
+  XLSX.writeFile(wb, "cupx-kmclulib.xlsx", { cellStyles:true });
 }
 
 /* ---------- PDF Export ---------- */
@@ -343,7 +343,7 @@ function exportPDF() {
     }
   });
 
-  doc.save("KMCLU_Library_Report.pdf");
+  doc.save("cupx-kmclulib.pdf");
 }
 </script>
 
