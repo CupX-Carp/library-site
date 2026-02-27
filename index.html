@@ -265,32 +265,77 @@ async function searchBook() {
 
 /* ---------- Excel Export ---------- */
 function exportExcel() {
-  if (currentResults.length === 0) return alert("No data to export.");
+  if (currentResults.length === 0)
+    return alert("No data to export.");
 
   const wb = XLSX.utils.book_new();
 
+  // Prepare data
   const data = [
     ["KMCLU Library Search Portal by CupX", "", "", ""],
-    ["Sr. No", "Title", "Language", "Material"],
-    ...currentResults.map((book, i) => [
+    ["Sr. No", "Title", "Language", "Material"]
+  ];
+
+  currentResults.forEach((book, i) => {
+    data.push([
       i + 1,
       book.title || "",
       book.language || "",
       book.material || ""
-    ])
-  ];
+    ]);
+  });
 
   const ws = XLSX.utils.aoa_to_sheet(data);
 
-  // Merge A1:D1 for title row
-  ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }];
+  // Merge A1:D1
+  ws["!merges"] = [{
+    s: { r: 0, c: 0 },
+    e: { r: 0, c: 3 }
+  }];
 
-  // Column widths
-  ws["!cols"] = [{ wch: 8 }, { wch: 45 }, { wch: 15 }, { wch: 22 }];
+  // Auto column width calculation
+  const colWidths = [];
+
+  for (let col = 0; col < 4; col++) {
+    let maxLength = 10;
+
+    for (let row = 0; row < data.length; row++) {
+      const cell = data[row][col];
+      if (cell) {
+        maxLength = Math.max(maxLength, cell.toString().length);
+      }
+    }
+
+    colWidths.push({ wch: maxLength + 2 });
+  }
+
+  ws["!cols"] = colWidths;
+
+  // Increase title row height
+  ws["!rows"] = [{ hpt: 35 }];
+
+  // Title styling (limited but works)
+  if (ws["A1"]) {
+    ws["A1"].s = {
+      font: { bold: true, sz: 18 },
+      alignment: { horizontal: "center", vertical: "center" }
+    };
+  }
+
+  // Header row bold
+  ["A2", "B2", "C2", "D2"].forEach(cell => {
+    if (ws[cell]) {
+      ws[cell].s = {
+        font: { bold: true },
+        alignment: { horizontal: "center" }
+      };
+    }
+  });
 
   XLSX.utils.book_append_sheet(wb, ws, "Library Data");
-  XLSX.writeFile(wb, "cupx-kmclulib.xlsx");
-}
+
+  XLSX.writeFile(wb, "KMCLU_Library_Report.xlsx");
+      }
 
 /* ---------- PDF Export ---------- */
 function exportPDF(){
