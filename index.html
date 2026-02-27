@@ -265,7 +265,7 @@ async function searchBook() {
 
 /* ---------- Excel Export ---------- */
 function exportExcel() {
-  if (currentResults.length === 0) 
+  if (currentResults.length === 0)
     return alert("No data to export.");
 
   const wb = XLSX.utils.book_new();
@@ -300,31 +300,29 @@ function exportExcel() {
     { wch: 22 }
   ];
 
-  // Increase row height for header
-  ws["!rows"] = [{ hpt: 35 }];
+  // Row height for header
+  ws["!rows"] = [{ hpt: 40 }];
 
-  // Header styling (works in browser build)
+  // Title styling
   ws["A1"].s = {
-    font: { bold: true, sz: 18 },
+    font: { bold: true, sz: 20 },
     alignment: { horizontal: "center", vertical: "center" }
   };
 
+  // Header row styling (A2:D2)
+  ["A2", "B2", "C2", "D2"].forEach(cell => {
+    if (!ws[cell]) return;
+    ws[cell].s = {
+      font: { bold: true },
+      alignment: { horizontal: "center" }
+    };
+  });
+
   XLSX.utils.book_append_sheet(wb, ws, "Library Data");
 
-  const wbout = XLSX.write(wb, {
-    bookType: "xlsx",
-    type: "array"
-  });
-
-  const blob = new Blob([wbout], {
-    type: "application/octet-stream"
-  });
-
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "cupx-kmclulib.xlsx";
-  link.click();
-}
+  // Important: use writeFile directly for xlsx-style
+  XLSX.writeFile(wb, "cupx-kmclulib.xlsx");
+  }
 
 /* ---------- PDF Export ---------- */
 function exportPDF(){
