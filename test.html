@@ -6,24 +6,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>KMCLU Library Portal | Academic Book Search</title>
-
 <meta name="description" content="KMCLU Library Portal - Search academic books across multiple departments.">
-<meta name="keywords" content="KMCLU Library, KMCLU Books, Academic Book Search">
-<meta name="author" content="KMCLU Library Project">
-
 <link rel="canonical" href="https://library.kmclu.cupx.in/">
-
-<meta property="og:title" content="KMCLU Library Portal">
-<meta property="og:description" content="Search academic books across multiple departments.">
-<meta property="og:url" content="https://library.kmclu.cupx.in/">
-<meta property="og:type" content="website">
 
 <!-- PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
-<!-- Excel -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- Excel (STYLE SUPPORTED BUILD) -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx-style@0.8.13/dist/xlsx.full.min.js"></script>
 
 <style>
 * { box-sizing: border-box; }
@@ -46,10 +37,7 @@ header {
   background-color: #020617;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 22px;
-}
+header h1 { margin: 0; font-size: 22px; }
 
 .home-btn {
   color: #38bdf8;
@@ -75,19 +63,19 @@ main {
   text-align: center;
 }
 
-.header {
-  margin-bottom: 25px;
-}
+.header { margin-bottom: 25px; }
 
 .header svg {
-  width: 40px;
-  height: 40px;
-  fill: #38bdf8;
+  width: 48px;
+  height: 48px;
+  stroke: #38bdf8;
+  fill: none;
+  stroke-width: 1.8;
 }
 
 .portal-title {
   margin: 10px 0 0 0;
-  font-size: 24px;
+  font-size: 26px;
 }
 
 .subtitle {
@@ -128,9 +116,11 @@ main {
 }
 
 .search-icon-btn svg {
-  width: 18px;
-  height: 18px;
-  fill: #020617;
+  width: 20px;
+  height: 20px;
+  stroke: #020617;
+  fill: none;
+  stroke-width: 2;
 }
 
 .button-row {
@@ -195,11 +185,12 @@ footer {
 <div class="container">
 
 <div class="header">
-  <svg viewBox="0 0 24 24">
-    <path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/>
-  </svg>
-  <h1 class="portal-title">KMCLU Library Portal</h1>
-  <div class="subtitle">Search Academic Books</div>
+<svg viewBox="0 0 24 24">
+  <path d="M3 4h7a3 3 0 013 3v13H6a3 3 0 01-3-3V4z"/>
+  <path d="M21 4h-7a3 3 0 00-3 3v13h7a3 3 0 003-3V4z"/>
+</svg>
+<h1 class="portal-title">KMCLU Library Portal</h1>
+<div class="subtitle">Search Academic Books</div>
 </div>
 
 <div class="search-wrapper">
@@ -208,7 +199,8 @@ footer {
     onkeypress="if(event.key==='Enter') searchBook()">
   <div class="search-icon-btn" onclick="searchBook()">
     <svg viewBox="0 0 24 24">
-      <path d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 109.5 16a6.5 6.5 0 004.2-1.6l.3.3L20 21.5 21.5 20z"/>
+      <circle cx="11" cy="11" r="7"></circle>
+      <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
     </svg>
   </div>
 </div>
@@ -271,20 +263,20 @@ async function searchBook() {
   `).join("");
 }
 
+/* ---------- Excel Export ---------- */
 function exportExcel() {
   if (currentResults.length === 0) return alert("No data to export.");
 
   const wb = XLSX.utils.book_new();
 
   const data = [
-    ["KMCLU Library Search Portal by CupX"],
-    [],
+    ["KMCLU Library Search Portal by CupX", "", "", ""],
     ["Sr. No", "Title", "Language", "Material"]
   ];
 
-  currentResults.forEach((book, index) => {
+  currentResults.forEach((book, i) => {
     data.push([
-      index + 1,
+      i + 1,
       book.title || "",
       book.language || "",
       book.material || ""
@@ -293,45 +285,88 @@ function exportExcel() {
 
   const ws = XLSX.utils.aoa_to_sheet(data);
 
+  // Merge A1:D1
   ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }];
+
+  // Column widths
   ws["!cols"] = [
     { wch: 8 },
-    { wch: 40 },
+    { wch: 45 },
     { wch: 15 },
-    { wch: 20 }
+    { wch: 22 }
   ];
 
-  XLSX.utils.book_append_sheet(wb, ws, "Library Data");
-  XLSX.writeFile(wb, "KMCLU_Library_Report.xlsx");
-}
+  // Row height
+  ws["!rows"] = [{ hpt: 40 }];
 
+  // Title styling
+  ws["A1"].s = {
+    font: { sz: 22, bold: true, color: { rgb: "FFFFFF" } },
+    alignment: { horizontal: "center", vertical: "center" },
+    fill: { patternType: "solid", fgColor: { rgb: "305496" } }
+  };
+
+  // Header row styling (A2:D2)
+  ["A2", "B2", "C2", "D2"].forEach(cell => {
+    ws[cell].s = {
+      font: { bold: true, color: { rgb: "FFFFFF" } },
+      alignment: { horizontal: "center", vertical: "center" },
+      fill: { patternType: "solid", fgColor: { rgb: "305496" } }
+    };
+  });
+
+  XLSX.utils.book_append_sheet(wb, ws, "Library Data");
+
+  const wbout = XLSX.write(wb, {
+    bookType: "xlsx",
+    type: "array"
+  });
+
+  const blob = new Blob([wbout], {
+    type: "application/octet-stream"
+  });
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "cupx-kmclulib.xlsx";
+  link.click();
+  }
+
+/* ---------- PDF Export ---------- */
 function exportPDF() {
   if (currentResults.length === 0) return alert("No data to export.");
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF("p", "mm", "a4");
 
-  const rows = currentResults.map((book, index) => [
-    index + 1,
-    book.title || "",
-    book.language || "",
-    book.material || ""
+  const rows = currentResults.map((b, i) => [
+    i + 1,
+    b.title || "",
+    b.language || "",
+    b.material || ""
   ]);
 
   doc.autoTable({
     head: [["Sr. No", "Title", "Language", "Material"]],
     body: rows,
-    startY: 25,
-    margin: { left: 10, right: 10 },
+    startY: 30,
     styles: { fontSize: 9 },
-    didDrawPage: function () {
-      doc.setFontSize(16);
-      doc.text("KMCLU Library Search Portal by CupX", 105, 15, { align: "center" });
+    headStyles: { fillColor: [48, 84, 150], textColor: 255 },
+
+    didDrawPage: function (data) {
+      // Header (every page)
+      doc.setFontSize(24);
+      doc.setFont(undefined, "bold");
+      doc.text("KMCLU Library Search Portal by CupX", 105, 18, { align: "center" });
+
+      // Reset font for table
+      doc.setFontSize(10);
+      doc.setFont(undefined, "normal");
     }
   });
 
-  doc.save("KMCLU_Library_Report.pdf");
-}
+  doc.save("cupx-kmclulib.pdf");
+  }
 </script>
 
 </body>
