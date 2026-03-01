@@ -13,12 +13,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
-<!-- Excel (STYLE SUPPORTED BUILD) -->
+<!-- Excel -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
 * { box-sizing: border-box; }
-
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
@@ -28,7 +27,6 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
-
 header {
   display: flex;
   justify-content: space-between;
@@ -36,15 +34,8 @@ header {
   padding: 16px 20px;
   background-color: #020617;
 }
-
 header h1 { margin: 0; font-size: 22px; }
-
-.home-btn {
-  color: #38bdf8;
-  text-decoration: none;
-  font-size: 14px;
-}
-
+.home-btn { color: #38bdf8; text-decoration: none; font-size: 14px; }
 main {
   flex: 1;
   display: flex;
@@ -52,7 +43,6 @@ main {
   align-items: center;
   padding: 40px 20px;
 }
-
 .container {
   background: #020617;
   width: 95%;
@@ -62,9 +52,7 @@ main {
   box-shadow: 0 25px 50px rgba(0,0,0,0.4);
   text-align: center;
 }
-
 .header { margin-bottom: 25px; }
-
 .header svg {
   width: 48px;
   height: 48px;
@@ -72,23 +60,9 @@ main {
   fill: none;
   stroke-width: 1.8;
 }
-
-.portal-title {
-  margin: 10px 0 0 0;
-  font-size: 26px;
-}
-
-.subtitle {
-  margin: 5px 0 20px 0;
-  font-size: 14px;
-  color: #94a3b8;
-}
-
-.search-wrapper {
-  position: relative;
-  margin-bottom: 25px;
-}
-
+.portal-title { margin: 10px 0 0 0; font-size: 26px; }
+.subtitle { margin: 5px 0 20px 0; font-size: 14px; color: #94a3b8; }
+.search-wrapper { position: relative; margin-bottom: 25px; }
 .search-wrapper input {
   width: 100%;
   height: 56px;
@@ -99,7 +73,6 @@ main {
   background: #0f172a;
   color: #e5e7eb;
 }
-
 .search-icon-btn {
   position: absolute;
   right: 8px;
@@ -114,7 +87,6 @@ main {
   align-items: center;
   cursor: pointer;
 }
-
 .search-icon-btn svg {
   width: 20px;
   height: 20px;
@@ -122,13 +94,7 @@ main {
   fill: none;
   stroke-width: 2;
 }
-
-.button-row {
-  display: flex;
-  gap: 14px;
-  margin-bottom: 15px;
-}
-
+.button-row { display: flex; gap: 14px; margin-bottom: 15px; }
 .button-row button {
   flex: 1;
   padding: 13px;
@@ -140,7 +106,6 @@ main {
   background: #38bdf8;
   color: #020617;
 }
-
 .notification {
   display: none;
   padding: 10px;
@@ -148,10 +113,8 @@ main {
   font-size: 14px;
   margin-bottom: 15px;
 }
-
 .success { background: #38bdf8; color: #020617; }
 .error { background: #b23a48; color: white; }
-
 .book-card {
   background: #0f172a;
   border-radius: 14px;
@@ -160,10 +123,8 @@ main {
   border: 2px solid #1e3a5f;
   text-align: left;
 }
-
 .book-title { font-weight: 600; }
 .book-meta { font-size: 13px; color: #94a3b8; }
-
 footer {
   text-align: center;
   padding: 20px;
@@ -194,20 +155,20 @@ footer {
 </div>
 
 <div class="search-wrapper">
-  <input type="text" id="searchBox"
-    placeholder="Search by title..."
-    onkeypress="if(event.key==='Enter') searchBook()">
-  <div class="search-icon-btn" onclick="searchBook()">
-    <svg viewBox="0 0 24 24">
-      <circle cx="11" cy="11" r="7"></circle>
-      <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
-    </svg>
-  </div>
+<input type="text" id="searchBox"
+placeholder="Search by title..."
+onkeypress="if(event.key==='Enter') searchBook()">
+<div class="search-icon-btn" onclick="searchBook()">
+<svg viewBox="0 0 24 24">
+<circle cx="11" cy="11" r="7"></circle>
+<line x1="16.65" y1="16.65" x2="21" y2="21"></line>
+</svg>
+</div>
 </div>
 
 <div class="button-row">
-  <button onclick="exportExcel()">Export Excel</button>
-  <button onclick="exportPDF()">Export PDF</button>
+<button onclick="exportExcel()">Export Excel</button>
+<button onclick="exportPDF()">Export PDF</button>
 </div>
 
 <div id="notification" class="notification"></div>
@@ -224,120 +185,112 @@ footer {
 let currentResults = [];
 
 async function searchBook() {
-  const query = document.getElementById("searchBox").value.trim().toLowerCase();
-  const notification = document.getElementById("notification");
-  const resultsDiv = document.getElementById("results");
+const query=document.getElementById("searchBox").value.trim().toLowerCase();
+const notification=document.getElementById("notification");
+const resultsDiv=document.getElementById("results");
 
-  notification.style.display = "block";
-  notification.className = "notification success";
-  notification.innerText = "Searching...";
-  resultsDiv.innerHTML = "";
+notification.style.display="block";
+notification.className="notification success";
+notification.innerText="Searching...";
+resultsDiv.innerHTML="";
 
-  if (!query) {
-    notification.className = "notification error";
-    notification.innerText = "Please enter a search term.";
-    return;
-  }
+if(!query){
+notification.className="notification error";
+notification.innerText="Please enter a search term.";
+return;
+}
 
-  const response = await fetch("https://library-back1.onrender.com/books");
-  const books = await response.json();
+const response=await fetch("https://library-back1.onrender.com/books");
+const books=await response.json();
 
-  currentResults = books.filter(book =>
-    book.title.toLowerCase().includes(query)
-  );
+currentResults=books.filter(book =>
+book.title.toLowerCase().includes(query)
+);
 
-  if (currentResults.length === 0) {
-    notification.className = "notification error";
-    notification.innerText = "No books found.";
-    return;
-  }
+if(currentResults.length===0){
+notification.className="notification error";
+notification.innerText="No books found.";
+return;
+}
 
-  notification.innerText = currentResults.length + " result(s) found.";
+notification.innerText=currentResults.length+" result(s) found.";
 
-  resultsDiv.innerHTML = currentResults.map(book => `
-    <div class="book-card">
-      <div class="book-title">${book.title}</div>
-      <div class="book-meta">Language: ${book.language || "-"}</div>
-      <div class="book-meta">Material: ${book.material || "-"}</div>
-    </div>
-  `).join("");
+resultsDiv.innerHTML=currentResults.map(book=>`
+<div class="book-card">
+<div class="book-title">${book.title}</div>
+<div class="book-meta">Language: ${book.language||"-"}</div>
+<div class="book-meta">Material: ${book.material||"-"}</div>
+</div>
+`).join("");
 }
 
 /* ---------- Excel Export ---------- */
-function exportExcel() {
-  if (currentResults.length === 0)
-    return alert("No data to export.");
+function exportExcel(){
 
-  const wb = XLSX.utils.book_new();
+if(currentResults.length===0)
+return alert("No data to export.");
 
-  // Prepare data
-  const data = [
-    ["KMCLU Library Search Portal by CupX", "", "", ""],
-    ["Sr. No", "Title", "Language", "Material"]
-  ];
+const wb=XLSX.utils.book_new();
 
-  currentResults.forEach((book, i) => {
-    data.push([
-      i + 1,
-      book.title || "",
-      book.language || "",
-      book.material || ""
-    ]);
-  });
+const data=[
+["KMCLU Library Search Portal by CupX"],
+["Sr. No","Title","Language","Material Type"]
+];
 
-  const ws = XLSX.utils.aoa_to_sheet(data);
+currentResults.forEach((b,i)=>{
+data.push([
+i+1,
+b.title||"",
+b.language||"",
+b.material||""
+]);
+});
 
-  // Merge A1:D1
-  ws["!merges"] = [{
-    s: { r: 0, c: 0 },
-    e: { r: 0, c: 3 }
-  }];
+const ws=XLSX.utils.aoa_to_sheet(data);
 
-  // Auto column width calculation
-  const colWidths = [];
+/* Merge title */
+ws["!merges"]=[{s:{r:0,c:0},e:{r:0,c:3}}];
 
-  for (let col = 0; col < 4; col++) {
-    let maxLength = 10;
+/* Auto width (ignore merged title row) */
+const colWidths=[];
+for(let c=0;c<4;c++){
+let max=10;
+for(let r=1;r<data.length;r++){
+if(data[r][c])
+max=Math.max(max,data[r][c].toString().length);
+}
+colWidths.push({wch:max+3});
+}
 
-    for (let row = 0; row < data.length; row++) {
-      const cell = data[row][col];
-      if (cell) {
-        maxLength = Math.max(maxLength, cell.toString().length);
-      }
-    }
+/* Slightly wider Sr No column */
+colWidths[0].wch+=2;
 
-    colWidths.push({ wch: maxLength + 2 });
-  }
+ws["!cols"]=colWidths;
 
-  ws["!cols"] = colWidths;
+/* Increase title row height */
+ws["!rows"]=[{hpt:30}];
 
-  // Increase title row height
-  ws["!rows"] = [{ hpt: 35 }];
+/* Bold + center title */
+ws["A1"].s={
+font:{bold:true,sz:18},
+alignment:{horizontal:"center",vertical:"center"}
+};
 
-  // Title styling (limited but works)
-  if (ws["A1"]) {
-    ws["A1"].s = {
-      font: { bold: true, sz: 18 },
-      alignment: { horizontal: "center", vertical: "center" }
-    };
-  }
+/* Bold headers */
+["A2","B2","C2","D2"].forEach(cell=>{
+if(ws[cell]){
+ws[cell].s={
+font:{bold:true},
+alignment:{horizontal:"center"}
+};
+}
+});
 
-  // Header row bold
-  ["A2", "B2", "C2", "D2"].forEach(cell => {
-    if (ws[cell]) {
-      ws[cell].s = {
-        font: { bold: true },
-        alignment: { horizontal: "center" }
-      };
-    }
-  });
+XLSX.utils.book_append_sheet(wb,ws,"Library Data");
+XLSX.writeFile(wb,"KMCLU_Library_Report.xlsx");
+}
 
-  XLSX.utils.book_append_sheet(wb, ws, "Library Data");
-
-  XLSX.writeFile(wb, "KMCLU_Library_Report.xlsx");
-      }
-
-/* ---------- PDF Export ---------- */
+/* ---------- PDF Export (unchanged logic) ---------- */
 function exportPDF(){
 if(currentResults.length===0)return alert("No data to export.");
 
@@ -349,13 +302,13 @@ i+1,b.title||"",b.language||"",b.material||""
 ]);
 
 doc.autoTable({
-head:[["Sr. No","Title","Language","Material"]],
+head:[["Sr. No","Title","Language","Material Type"]],
 body:rows,
 margin:{top:35},
 styles:{fontSize:9},
 headStyles:{fillColor:[48,84,150],textColor:255},
 
-didDrawPage:function(data){
+didDrawPage:function(){
 doc.setFontSize(20);
 doc.setFont(undefined,"bold");
 doc.text("KMCLU Library Search Portal by CupX",105,20,{align:"center"});
@@ -363,8 +316,8 @@ doc.setFont(undefined,"normal");
 }
 });
 
-doc.save("cupx-kmclulib.pdf");
-      }
+doc.save("KMCLU_Library_Report.pdf");
+}
 </script>
 
 </body>
