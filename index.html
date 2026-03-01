@@ -248,35 +248,50 @@ b.material||""
 
 const ws=XLSX.utils.aoa_to_sheet(data);
 
-/* Merge title */
-ws["!merges"]=[{s:{r:0,c:0},e:{r:0,c:3}}];
+/* ---------- AUTO WIDTH (ignore row 0 completely) ---------- */
 
-/* Auto width (ignore merged title row) */
 const colWidths=[];
+
 for(let c=0;c<4;c++){
-let max=10;
+
+let maxLength=0;
+
+/* start from row 1 (skip merged title row 0) */
 for(let r=1;r<data.length;r++){
-if(data[r][c])
-max=Math.max(max,data[r][c].toString().length);
+if(data[r][c]){
+maxLength=Math.max(
+maxLength,
+data[r][c].toString().length
+);
 }
-colWidths.push({wch:max+3});
 }
 
-/* Slightly wider Sr No column */
-colWidths[0].wch+=2;
+/* padding */
+colWidths.push({wch:maxLength+3});
+}
+
+/* Make Sr. No column slightly wider */
+colWidths[0].wch+=3;
 
 ws["!cols"]=colWidths;
 
-/* Increase title row height */
+/* ---------- Merge AFTER width calculation ---------- */
+
+ws["!merges"]=[{
+s:{r:0,c:0},
+e:{r:0,c:3}
+}];
+
+/* Row height for title */
 ws["!rows"]=[{hpt:30}];
 
-/* Bold + center title */
+/* Title style */
 ws["A1"].s={
 font:{bold:true,sz:18},
 alignment:{horizontal:"center",vertical:"center"}
 };
 
-/* Bold headers */
+/* Header style */
 ["A2","B2","C2","D2"].forEach(cell=>{
 if(ws[cell]){
 ws[cell].s={
@@ -287,9 +302,8 @@ alignment:{horizontal:"center"}
 });
 
 XLSX.utils.book_append_sheet(wb,ws,"Library Data");
-XLSX.writeFile(wb,"KMCLU_Library_Report.xlsx");
+XLSX.writeFile(wb,"cupx-kmclib.xlsx");
 }
-
 /* ---------- PDF Export (unchanged logic) ---------- */
 function exportPDF(){
 if(currentResults.length===0)return alert("No data to export.");
@@ -316,7 +330,7 @@ doc.setFont(undefined,"normal");
 }
 });
 
-doc.save("KMCLU_Library_Report.pdf");
+doc.save("cupx-kmclib.pdf");
 }
 </script>
 
