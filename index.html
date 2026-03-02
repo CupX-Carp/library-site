@@ -302,7 +302,7 @@ alignment:{horizontal:"center"}
 });
 
 XLSX.utils.book_append_sheet(wb,ws,"Library Data");
-XLSX.writeFile(wb,"cupx-kmclib.xlsx");
+XLSX.writeFile(wb,"cupx-lib.xlsx");
 }
 /* ---------- PDF Export (unchanged logic) ---------- */
 function exportPDF(){
@@ -330,7 +330,7 @@ doc.setFont(undefined,"normal");
 }
 });
 
-doc.save("cupx-kmclib.pdf");
+doc.save("cupx-lib.pdf");
 }
 </script>
 
